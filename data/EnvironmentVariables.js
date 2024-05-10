@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JWT_SECRET_KEY = exports.databaseURL_3 = exports.databaseURL_2 = exports.databaseURL = exports.PORT = void 0;
+const PORT = 5001;
+exports.PORT = PORT;
+const databaseURL = `mongodb+srv://ar7:12345@cluster0.1g8wuka.mongodb.net/imponexpo?retryWrites=true&w=majority`;
+exports.databaseURL = databaseURL;
+const databaseURL_2 = `mongodb+srv://ar7:12345@cluster0.1g8wuka.mongodb.net/imponexpo?retryWrites=true&w=majority&appName=Cluster0`;
+exports.databaseURL_2 = databaseURL_2;
+const databaseURL_3 = `mongodb+srv://ar7:12345@cluster0.1g8wuka.mongodb.net/imponexpo?retryWrites=true&w=majority`;
+exports.databaseURL_3 = databaseURL_3;
+const JWT_SECRET_KEY = "grill-chicken-is-very-tasty";
+exports.JWT_SECRET_KEY = JWT_SECRET_KEY;
