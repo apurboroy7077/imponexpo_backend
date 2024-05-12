@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
+exports.getSellerDetailsOfProductsForClientSideController = exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
 const hashingPassword_1 = require("../../custom-functions/password-hashing/hashingPassword");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -116,3 +116,25 @@ const authenticateUserWithTokenController = (request, response) => __awaiter(voi
     }
 });
 exports.authenticateUserWithTokenController = authenticateUserWithTokenController;
+const getSellerDetailsOfProductsForClientSideController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = yield request.body;
+        const { authenticationToken, sellerEmail } = receivedData;
+        const sellerDetailsSavedOnDatabase = yield schemas_model_1.userDataModelMongoDbMongoose.find({
+            userEmail: sellerEmail,
+        });
+        const sellerDetails = sellerDetailsSavedOnDatabase[0].toObject();
+        delete sellerDetails.password;
+        delete sellerDetails._id;
+        response.status(200).send({
+            message: "Received Seller Details Request Successfully",
+            sellerDetails: sellerDetails,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.getSellerDetailsOfProductsForClientSideController = getSellerDetailsOfProductsForClientSideController;

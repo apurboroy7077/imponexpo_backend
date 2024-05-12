@@ -101,7 +101,6 @@ const getRandomProductsController = (request, response) => __awaiter(void 0, voi
         const productsDataFetchedFromDatabase = yield schemas_model_1.productsDataModelMongoDbMongoose.aggregate([
             { $sample: { size: numberOfProducts } },
         ]);
-        console.log(productsDataFetchedFromDatabase);
         response.status(200).send({
             message: "Random Products Fetching Successful",
             productsData: productsDataFetchedFromDatabase,

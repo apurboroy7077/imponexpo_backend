@@ -144,7 +144,7 @@ const getRandomProductsController = async (
       await productsDataModelMongoDbMongoose.aggregate([
         { $sample: { size: numberOfProducts } },
       ]);
-    console.log(productsDataFetchedFromDatabase);
+
     response.status(200).send({
       message: "Random Products Fetching Successful",
       productsData: productsDataFetchedFromDatabase,

@@ -135,8 +135,35 @@ const authenticateUserWithTokenController = async (
     response.status(500).send(error.message);
   }
 };
+const getSellerDetailsOfProductsForClientSideController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = await request.body;
+    const { authenticationToken, sellerEmail } = receivedData;
+    const sellerDetailsSavedOnDatabase =
+      await userDataModelMongoDbMongoose.find({
+        userEmail: sellerEmail,
+      });
+    const sellerDetails =
+      sellerDetailsSavedOnDatabase[0].toObject() as userDataForClientSideType;
+    delete sellerDetails.password;
+    delete sellerDetails._id;
+
+    response.status(200).send({
+      message: "Received Seller Details Request Successfully",
+      sellerDetails: sellerDetails,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   signUpController,
   signInController,
   authenticateUserWithTokenController,
+  getSellerDetailsOfProductsForClientSideController,
 };

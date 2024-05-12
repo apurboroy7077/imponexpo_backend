@@ -15,6 +15,8 @@ const firebaseConfig = {
 };
 const SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API =
   "/products/get-random-products/api";
+const SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API =
+  "/authentication/get-seller-details-for-client-side/api";
 export {
   PORT,
   databaseURL,
@@ -24,4 +26,5 @@ export {
   SUB_ADDRESS_OF_UPLOAD_PRODUCTS_API,
   firebaseConfig,
   SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API,
+  SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API,
 };

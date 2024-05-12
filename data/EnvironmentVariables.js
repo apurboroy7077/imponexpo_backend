@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = exports.firebaseConfig = exports.SUB_ADDRESS_OF_UPLOAD_PRODUCTS_API = exports.JWT_SECRET_KEY = exports.databaseURL_3 = exports.databaseURL_2 = exports.databaseURL = exports.PORT = void 0;
+exports.SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API = exports.SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = exports.firebaseConfig = exports.SUB_ADDRESS_OF_UPLOAD_PRODUCTS_API = exports.JWT_SECRET_KEY = exports.databaseURL_3 = exports.databaseURL_2 = exports.databaseURL = exports.PORT = void 0;
 const PORT = 5001;
 exports.PORT = PORT;
 const databaseURL = `mongodb+srv://ar7:12345@cluster0.1g8wuka.mongodb.net/imponexpo?retryWrites=true&w=majority`;
@@ -25,3 +25,5 @@ const firebaseConfig = {
 exports.firebaseConfig = firebaseConfig;
 const SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = "/products/get-random-products/api";
 exports.SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API;
+const SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API = "/authentication/get-seller-details-for-client-side/api";
+exports.SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API = SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API;
