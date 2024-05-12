@@ -27,7 +27,7 @@ type userDataForClientSideType = {
 };
 type processedDataOfAuthenticationToken = {
   userEmail: string;
-  iat: string;
+  iat: number;
 };
 export type {
   expressType,

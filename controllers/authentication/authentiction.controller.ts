@@ -124,7 +124,7 @@ const authenticateUserWithTokenController = async (
     userDataForClientSide = userDataSavedOnDatabase[0].toObject();
     delete userDataForClientSide.password;
     delete userDataForClientSide._id;
-    console.log(userDataForClientSide);
+
     response.status(200).send({
       message: "Authentication Successful",
       userData: userDataForClientSide,

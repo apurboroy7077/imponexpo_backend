@@ -41,6 +41,114 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  profilePictureSrc: {
+    type: String,
+    required: false,
+  },
+});
+const productSchema = new mongoose.Schema({
+  productName: {
+    type: String,
+    required: true,
+  },
+  productCategory: {
+    type: String,
+    required: true,
+  },
+  sellerEmail: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: String,
+    required: true,
+  },
+  priceType: {
+    type: String,
+    required: true,
+  },
+  productHashtags: {
+    type: String,
+    required: true,
+  },
+  productDescription: {
+    type: String,
+    required: true,
+  },
+  minimumQuantityToOrder: {
+    type: String,
+    required: true,
+  },
+
+  usersAge: {
+    type: String,
+    required: true,
+  },
+  inStock: {
+    type: Boolean,
+    required: true,
+  },
+  productOrigin: {
+    type: String,
+    required: true,
+  },
+  mainImageUrl: {
+    type: String,
+    required: true,
+  },
+  ar7id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
+const likesSchema = new mongoose.Schema({
+  idOfLikeGiver: {
+    type: String,
+    required: true,
+  },
+  idOfSubjectThatReceivedLike: {
+    type: String,
+    required: true,
+  },
+});
+const commentSchema = new mongoose.Schema({
+  idOfCommentGiver: {
+    type: String,
+    required: true,
+  },
+  idOfSubjectWhoReceivedComment: {
+    type: String,
+    required: true,
+  },
+  comment: {},
 });
 const userDataModelMongoDbMongoose = mongoose.model("userData", userSchema);
-export { userDataModelMongoDbMongoose };
+const productsDataModelMongoDbMongoose = mongoose.model(
+  "productsDatas",
+  productSchema
+);
+const likesDataModelMongoDbMongoose = mongoose.model("likesData", likesSchema);
+const commentsDataModelMongoDbMongoose = mongoose.model(
+  "commentsData",
+  commentSchema
+);
+
+export { userDataModelMongoDbMongoose, productsDataModelMongoDbMongoose };
+
+type productsDataTypeForSavingInDatabase = {
+  productName: string;
+  productCategory: string;
+  sellerEmail: string;
+  price: string;
+  priceType: string;
+  productHashtags: string;
+  productDescription: string;
+  minimumQuantityToOrder: string;
+  usersAge: string;
+  inStock: boolean;
+  productOrigin: string;
+  mainImageUrl: string;
+  ar7id: string;
+};
+export type { productsDataTypeForSavingInDatabase };
