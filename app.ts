@@ -6,6 +6,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { productsRouter } from "./routes/products/products.route";
 import { userActivityRouter } from "./routes/user-activity/userActivity.route";
+import { adminRouter } from "./routes/admin/admin.route";
 
 const app = express();
 // USING SOME BASIC PACKAGES STARTS-----------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ app.use(authenticationRouter);
 app.use(testingRouter);
 app.use(productsRouter);
 app.use(userActivityRouter);
+app.use(adminRouter);
 // USING ROUTES ENDS------------------------------------------------------------------------------------------------------------------------
 
 connectDB();

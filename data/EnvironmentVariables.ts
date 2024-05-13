@@ -25,6 +25,10 @@ const SUB_ADDRESS_OF_DISLIKING_SOMETHING_API = "/user-activity/dislike/api";
 const SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API =
   "/user-activity/get-total-number-of-likes/api";
 const SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = "/user-activity/follow-someone/api";
+const SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API =
+  "/admin/give-permission-to-sell/api";
+const IMPONEXPO_SUPERUSER_KEY = "imponexpo-superuser-key-123";
+const SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API = "/admin/make-someone-admin/api";
 export {
   PORT,
   databaseURL,
@@ -40,4 +44,7 @@ export {
   SUB_ADDRESS_OF_DISLIKING_SOMETHING_API,
   SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API,
   SUB_ADDRESS_OF_FOLLOW_SOMEONE_API,
+  SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API,
+  IMPONEXPO_SUPERUSER_KEY,
+  SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API,
 };

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = exports.SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API = exports.SUB_ADDRESS_OF_DISLIKING_SOMETHING_API = exports.SUB_ADDRESS_OF_CHECKING_LIKE_API = exports.SUB_ADDRESS_OF_LIKE_SOMETHING_API = exports.SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API = exports.SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = exports.firebaseConfig = exports.SUB_ADDRESS_OF_UPLOAD_PRODUCTS_API = exports.JWT_SECRET_KEY = exports.databaseURL_3 = exports.databaseURL_2 = exports.databaseURL = exports.PORT = void 0;
+exports.SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API = exports.IMPONEXPO_SUPERUSER_KEY = exports.SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API = exports.SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = exports.SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API = exports.SUB_ADDRESS_OF_DISLIKING_SOMETHING_API = exports.SUB_ADDRESS_OF_CHECKING_LIKE_API = exports.SUB_ADDRESS_OF_LIKE_SOMETHING_API = exports.SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API = exports.SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API = exports.firebaseConfig = exports.SUB_ADDRESS_OF_UPLOAD_PRODUCTS_API = exports.JWT_SECRET_KEY = exports.databaseURL_3 = exports.databaseURL_2 = exports.databaseURL = exports.PORT = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const PORT = process.env.PORT || 5001;
@@ -42,3 +42,9 @@ const SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API = "/user-activity/get-tot
 exports.SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API = SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API;
 const SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = "/user-activity/follow-someone/api";
 exports.SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = SUB_ADDRESS_OF_FOLLOW_SOMEONE_API;
+const SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API = "/admin/give-permission-to-sell/api";
+exports.SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API = SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API;
+const IMPONEXPO_SUPERUSER_KEY = "imponexpo-superuser-key-123";
+exports.IMPONEXPO_SUPERUSER_KEY = IMPONEXPO_SUPERUSER_KEY;
+const SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API = "/admin/make-someone-admin/api";
+exports.SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API = SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
@@ -148,6 +148,20 @@ const commentSchema = new mongoose_1.default.Schema({
     },
     comment: {},
 });
+const selllerSchema = new mongoose_1.default.Schema({
+    sellerEmail: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+});
+const adminSchema = new mongoose_1.default.Schema({
+    emailOfTheAdmin: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+});
 const userDataModelMongoDbMongoose = mongoose_1.default.model("userData", userSchema);
 exports.userDataModelMongoDbMongoose = userDataModelMongoDbMongoose;
 const productsDataModelMongoDbMongoose = mongoose_1.default.model("productsDatas", productSchema);
@@ -157,3 +171,7 @@ exports.likesDataModelMongoDbMongoose = likesDataModelMongoDbMongoose;
 const commentsDataModelMongoDbMongoose = mongoose_1.default.model("commentsData", commentSchema);
 const followersDataModelMongoDbMongoose = mongoose_1.default.model("followersData", followerSchema);
 exports.followersDataModelMongoDbMongoose = followersDataModelMongoDbMongoose;
+const sellersDataModelMongoDbMongoose = mongoose_1.default.model("sellerData", selllerSchema);
+exports.sellersDataModelMongoDbMongoose = sellersDataModelMongoDbMongoose;
+const adminDataModelMongoDbMongoose = mongoose_1.default.model("adminData", adminSchema);
+exports.adminDataModelMongoDbMongoose = adminDataModelMongoDbMongoose;

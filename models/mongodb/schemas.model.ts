@@ -143,6 +143,20 @@ const commentSchema = new mongoose.Schema({
   },
   comment: {},
 });
+const selllerSchema = new mongoose.Schema({
+  sellerEmail: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
+const adminSchema = new mongoose.Schema({
+  emailOfTheAdmin: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
 const userDataModelMongoDbMongoose = mongoose.model("userData", userSchema);
 const productsDataModelMongoDbMongoose = mongoose.model(
   "productsDatas",
@@ -157,11 +171,18 @@ const followersDataModelMongoDbMongoose = mongoose.model(
   "followersData",
   followerSchema
 );
+const sellersDataModelMongoDbMongoose = mongoose.model(
+  "sellerData",
+  selllerSchema
+);
+const adminDataModelMongoDbMongoose = mongoose.model("adminData", adminSchema);
 export {
   userDataModelMongoDbMongoose,
   productsDataModelMongoDbMongoose,
   likesDataModelMongoDbMongoose,
   followersDataModelMongoDbMongoose,
+  sellersDataModelMongoDbMongoose,
+  adminDataModelMongoDbMongoose,
 };
 
 type productsDataTypeForSavingInDatabase = {
