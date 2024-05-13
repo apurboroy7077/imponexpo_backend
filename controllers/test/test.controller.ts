@@ -18,4 +18,11 @@ const testController2 = (
   console.log("This is Test Controller 2");
   response.send("This is Test Controller 2");
 };
-export { testController, testController2 };
+const crashServerController = (
+  request: express.Request,
+  response: express.Response
+) => {
+  process.exit(1);
+  throw new Error("Intentional Crash For Testing Purposes");
+};
+export { testController, testController2, crashServerController };

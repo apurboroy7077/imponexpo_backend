@@ -155,6 +155,7 @@ const getRandomProductsController = async (
     response.status(500).send(error.message);
   }
 };
+
 export { productsUploadController, getRandomProductsController };
 
 // {

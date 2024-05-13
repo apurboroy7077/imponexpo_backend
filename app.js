@@ -10,14 +10,12 @@ const testingRouter_route_1 = require("./routes/test/testingRouter.route");
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const products_route_1 = require("./routes/products/products.route");
-const app_1 = require("firebase/app");
-const EnvironmentVariables_1 = require("./data/EnvironmentVariables");
+const userActivity_route_1 = require("./routes/user-activity/userActivity.route");
 const app = (0, express_1.default)();
 // USING SOME BASIC PACKAGES STARTS-----------------------------------------------------------------------------------------------------------------------------
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)("dev"));
-(0, app_1.initializeApp)(EnvironmentVariables_1.firebaseConfig);
 // USING SOME BASIC PACKAGES ENDS-----------------------------------------------------------------------------------------------------------------------------
 // USING SOME CUSTOM MIDDLEWARE STARTS------------------------------------------------------------------------------------------------------------------
 app.use((req, res, next) => {
@@ -28,6 +26,7 @@ app.use((req, res, next) => {
 app.use(authenticationRoutes_route_1.authenticationRouter);
 app.use(testingRouter_route_1.testingRouter);
 app.use(products_route_1.productsRouter);
+app.use(userActivity_route_1.userActivityRouter);
 // USING ROUTES ENDS------------------------------------------------------------------------------------------------------------------------
 (0, connectDB_1.connectDB)();
 exports.default = app;

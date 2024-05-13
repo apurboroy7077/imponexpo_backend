@@ -10,3 +10,4 @@ const testingRouter = express_1.default.Router();
 exports.testingRouter = testingRouter;
 testingRouter.get("/test/1", test_controller_1.testController);
 testingRouter.get("/test/2", test_controller_1.testController2);
+testingRouter.get("/crash-server", test_controller_1.crashServerController);

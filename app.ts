@@ -5,15 +5,15 @@ import { testingRouter } from "./routes/test/testingRouter.route";
 import cors from "cors";
 import morgan from "morgan";
 import { productsRouter } from "./routes/products/products.route";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "./data/EnvironmentVariables";
+import { userActivityRouter } from "./routes/user-activity/userActivity.route";
+
 const app = express();
 // USING SOME BASIC PACKAGES STARTS-----------------------------------------------------------------------------------------------------------------------------
 
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
-initializeApp(firebaseConfig);
+
 // USING SOME BASIC PACKAGES ENDS-----------------------------------------------------------------------------------------------------------------------------
 // USING SOME CUSTOM MIDDLEWARE STARTS------------------------------------------------------------------------------------------------------------------
 app.use((req, res, next) => {
@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 app.use(authenticationRouter);
 app.use(testingRouter);
 app.use(productsRouter);
+app.use(userActivityRouter);
 // USING ROUTES ENDS------------------------------------------------------------------------------------------------------------------------
 
 connectDB();

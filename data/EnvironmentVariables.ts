@@ -17,6 +17,12 @@ const SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API =
   "/products/get-random-products/api";
 const SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API =
   "/authentication/get-seller-details-for-client-side/api";
+const SUB_ADDRESS_OF_LIKE_SOMETHING_API = "/user-activity/like/api";
+const SUB_ADDRESS_OF_CHECKING_LIKE_API = "/user-activity/check-like/api";
+const SUB_ADDRESS_OF_DISLIKING_SOMETHING_API = "/user-activity/dislike/api";
+const SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API =
+  "/user-activity/get-total-number-of-likes/api";
+const SUB_ADDRESS_OF_FOLLOW_SOMEONE_API = "/user-activity/follow-someone/api";
 export {
   PORT,
   databaseURL,
@@ -27,4 +33,9 @@ export {
   firebaseConfig,
   SUB_ADDRESS_OF_GETTING_RANDOM_PRODUCTS_API,
   SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API,
+  SUB_ADDRESS_OF_LIKE_SOMETHING_API,
+  SUB_ADDRESS_OF_CHECKING_LIKE_API,
+  SUB_ADDRESS_OF_DISLIKING_SOMETHING_API,
+  SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API,
+  SUB_ADDRESS_OF_FOLLOW_SOMEONE_API,
 };

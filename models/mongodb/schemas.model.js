@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
@@ -108,12 +108,32 @@ const productSchema = new mongoose_1.default.Schema({
     },
 });
 const likesSchema = new mongoose_1.default.Schema({
-    idOfLikeGiver: {
+    emailOfLikeGiver: {
         type: String,
         required: true,
     },
-    idOfSubjectThatReceivedLike: {
+    ar7idOfSubjectThatReceivedLike: {
         type: String,
+        required: true,
+        unique: true,
+    },
+    unixTimeStamp: {
+        type: Number,
+        required: true,
+    },
+});
+const followerSchema = new mongoose_1.default.Schema({
+    emailOfThePersonWhoIsGettingFollowed: {
+        type: String,
+        required: true,
+    },
+    emailOfThePersonWhoIsFollowing: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    unixTimeStamp: {
+        type: Number,
         required: true,
     },
 });
@@ -133,4 +153,7 @@ exports.userDataModelMongoDbMongoose = userDataModelMongoDbMongoose;
 const productsDataModelMongoDbMongoose = mongoose_1.default.model("productsDatas", productSchema);
 exports.productsDataModelMongoDbMongoose = productsDataModelMongoDbMongoose;
 const likesDataModelMongoDbMongoose = mongoose_1.default.model("likesData", likesSchema);
+exports.likesDataModelMongoDbMongoose = likesDataModelMongoDbMongoose;
 const commentsDataModelMongoDbMongoose = mongoose_1.default.model("commentsData", commentSchema);
+const followersDataModelMongoDbMongoose = mongoose_1.default.model("followersData", followerSchema);
+exports.followersDataModelMongoDbMongoose = followersDataModelMongoDbMongoose;

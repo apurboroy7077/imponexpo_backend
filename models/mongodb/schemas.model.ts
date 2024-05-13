@@ -103,12 +103,32 @@ const productSchema = new mongoose.Schema({
   },
 });
 const likesSchema = new mongoose.Schema({
-  idOfLikeGiver: {
+  emailOfLikeGiver: {
     type: String,
     required: true,
   },
-  idOfSubjectThatReceivedLike: {
+  ar7idOfSubjectThatReceivedLike: {
     type: String,
+    required: true,
+    unique: true,
+  },
+  unixTimeStamp: {
+    type: Number,
+    required: true,
+  },
+});
+const followerSchema = new mongoose.Schema({
+  emailOfThePersonWhoIsGettingFollowed: {
+    type: String,
+    required: true,
+  },
+  emailOfThePersonWhoIsFollowing: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  unixTimeStamp: {
+    type: Number,
     required: true,
   },
 });
@@ -133,8 +153,16 @@ const commentsDataModelMongoDbMongoose = mongoose.model(
   "commentsData",
   commentSchema
 );
-
-export { userDataModelMongoDbMongoose, productsDataModelMongoDbMongoose };
+const followersDataModelMongoDbMongoose = mongoose.model(
+  "followersData",
+  followerSchema
+);
+export {
+  userDataModelMongoDbMongoose,
+  productsDataModelMongoDbMongoose,
+  likesDataModelMongoDbMongoose,
+  followersDataModelMongoDbMongoose,
+};
 
 type productsDataTypeForSavingInDatabase = {
   productName: string;
@@ -151,4 +179,18 @@ type productsDataTypeForSavingInDatabase = {
   mainImageUrl: string;
   ar7id: string;
 };
-export type { productsDataTypeForSavingInDatabase };
+type likeDatatypeForSavingInDatabase = {
+  emailOfLikeGiver: string;
+  ar7idOfSubjectThatReceivedLike: string;
+  unixTimeStamp: number;
+};
+type followersDataTypeForSavingInDatabase = {
+  emailOfThePersonWhoIsGettingFollowed: string;
+  emailOfThePersonWhoIsFollowing: string;
+  unixTimeStamp: number;
+};
+export type {
+  productsDataTypeForSavingInDatabase,
+  likeDatatypeForSavingInDatabase,
+  followersDataTypeForSavingInDatabase,
+};
