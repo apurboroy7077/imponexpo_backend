@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
@@ -162,6 +162,14 @@ const adminSchema = new mongoose_1.default.Schema({
         unique: true,
     },
 });
+const bannedUserSchema = new mongoose_1.default.Schema({
+    emailOfTheBannedUser: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+});
+// DATAMODELS STARTS HERE---------------------------------------------------------------------------------------------------------------------------------------
 const userDataModelMongoDbMongoose = mongoose_1.default.model("userData", userSchema);
 exports.userDataModelMongoDbMongoose = userDataModelMongoDbMongoose;
 const productsDataModelMongoDbMongoose = mongoose_1.default.model("productsDatas", productSchema);
@@ -175,3 +183,5 @@ const sellersDataModelMongoDbMongoose = mongoose_1.default.model("sellerData", s
 exports.sellersDataModelMongoDbMongoose = sellersDataModelMongoDbMongoose;
 const adminDataModelMongoDbMongoose = mongoose_1.default.model("adminData", adminSchema);
 exports.adminDataModelMongoDbMongoose = adminDataModelMongoDbMongoose;
+const bannedUserDataModelMongoDbMongoose = mongoose_1.default.model("bannedUsersData", bannedUserSchema);
+exports.bannedUserDataModelMongoDbMongoose = bannedUserDataModelMongoDbMongoose;

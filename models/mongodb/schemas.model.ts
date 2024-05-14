@@ -157,6 +157,14 @@ const adminSchema = new mongoose.Schema({
     unique: true,
   },
 });
+const bannedUserSchema = new mongoose.Schema({
+  emailOfTheBannedUser: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
+// DATAMODELS STARTS HERE---------------------------------------------------------------------------------------------------------------------------------------
 const userDataModelMongoDbMongoose = mongoose.model("userData", userSchema);
 const productsDataModelMongoDbMongoose = mongoose.model(
   "productsDatas",
@@ -176,6 +184,10 @@ const sellersDataModelMongoDbMongoose = mongoose.model(
   selllerSchema
 );
 const adminDataModelMongoDbMongoose = mongoose.model("adminData", adminSchema);
+const bannedUserDataModelMongoDbMongoose = mongoose.model(
+  "bannedUsersData",
+  bannedUserSchema
+);
 export {
   userDataModelMongoDbMongoose,
   productsDataModelMongoDbMongoose,
@@ -183,6 +195,7 @@ export {
   followersDataModelMongoDbMongoose,
   sellersDataModelMongoDbMongoose,
   adminDataModelMongoDbMongoose,
+  bannedUserDataModelMongoDbMongoose,
 };
 
 type productsDataTypeForSavingInDatabase = {

@@ -5,6 +5,7 @@ import {
 } from "../../data/EnvironmentVariables";
 import {
   adminDataModelMongoDbMongoose,
+  bannedUserDataModelMongoDbMongoose,
   sellersDataModelMongoDbMongoose,
 } from "../../models/mongodb/schemas.model";
 import jwt from "jsonwebtoken";
@@ -36,6 +37,7 @@ const makingSomeoneAdminController = async (
     response.status(500).send(error.message);
   }
 };
+
 const giveUserPermissionToSellController = async (
   request: express.Request,
   response: express.Response
@@ -61,19 +63,61 @@ const giveUserPermissionToSellController = async (
     // -----------------------------------------------------------------------------------------------------------------------------------------------------
     const { emailOfTheUserToGivePermissionToSell } = receivedData;
 
-    sellersDataModelMongoDbMongoose.create({
+    await sellersDataModelMongoDbMongoose.create({
       sellerEmail: emailOfTheUserToGivePermissionToSell,
     });
 
-    //
     response.status(200).send({
       message: "Added The User to sellers list Successfully",
     });
   } catch (error: any) {
     console.log(error);
+
     // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
     response.status(500).send(error.message);
   }
 };
+const banUserController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { authenticationToken } = receivedData;
+    const processedDataOfToken = (await jwt.verify(
+      authenticationToken,
+      JWT_SECRET_KEY
+    )) as processedDataOfAuthenticationToken;
+    const { userEmail } = processedDataOfToken;
+    // CHECK IF THE USER WHO MADE THIS REQUEST IS ADMIN OR NOT-------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------
+    const userDataInAdminDatabase = await adminDataModelMongoDbMongoose.find({
+      emailOfTheAdmin: userEmail,
+    });
+    if (userDataInAdminDatabase.length < 1) {
+      throw new Error("User is Not Admin");
+    }
+    //-------------------------------------------------------------------------------------------------------------------------------------------------
+    // ADD THE EMAIL WHICH ADMIN PROVIDED IN THE SELLERS DATABASE----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------
+    const { emailOfTheUserWhoWillBeBanned } = receivedData;
 
-export { makingSomeoneAdminController, giveUserPermissionToSellController };
+    await bannedUserDataModelMongoDbMongoose.create({
+      emailOfTheBannedUser: emailOfTheUserWhoWillBeBanned,
+    });
+
+    response.status(200).send({
+      message: "Banned User Successful.",
+    });
+  } catch (error: any) {
+    console.log(error);
+
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+export {
+  makingSomeoneAdminController,
+  giveUserPermissionToSellController,
+  banUserController,
+};

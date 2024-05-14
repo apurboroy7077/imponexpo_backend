@@ -23,6 +23,7 @@ const crashServerController = (
   response: express.Response
 ) => {
   process.exit(1);
+
   throw new Error("Intentional Crash For Testing Purposes");
 };
 export { testController, testController2, crashServerController };

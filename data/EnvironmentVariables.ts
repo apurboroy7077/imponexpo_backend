@@ -29,6 +29,7 @@ const SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API =
   "/admin/give-permission-to-sell/api";
 const IMPONEXPO_SUPERUSER_KEY = "imponexpo-superuser-key-123";
 const SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API = "/admin/make-someone-admin/api";
+const SUB_ADDRESS_OF_BANNING_SOMEONE_API = "/admin/ban-someone/api";
 export {
   PORT,
   databaseURL,
@@ -47,4 +48,5 @@ export {
   SUB_ADDRESS_OF_GIVING_PERMISSION_TO_SELL_API,
   IMPONEXPO_SUPERUSER_KEY,
   SUB_ADDRESS_OF_MAKING_SOMEONE_ADMIN_API,
+  SUB_ADDRESS_OF_BANNING_SOMEONE_API,
 };
