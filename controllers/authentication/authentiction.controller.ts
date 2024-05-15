@@ -10,6 +10,7 @@ import {
   userDataForClientSideType,
   userDataSavedOnDatabaseType,
 } from "../../data/types";
+import ar7id from "../../custom-functions/ar7id/ar7id";
 const signUpController = async (
   request: express.Request,
   response: express.Response
@@ -40,6 +41,7 @@ const signUpController = async (
     const hashedPassword = await hashMyPassword(password);
     // PROCESSING DATA FOR DATABASE----------------------------------------------------------------------------------------------------------------
     const userFullNameFinal = `${firstName} ${lastName}`;
+    const theAr7id = ar7id();
     const dataForSavingToDatabase = {
       userFullName: userFullNameFinal,
       userEmail: userEmail,
@@ -51,6 +53,7 @@ const signUpController = async (
       countryRegion: countryRegion,
       reasonForSignup: reasonForSignup,
       imponexpoAccountURL: imponexpoAccountURL,
+      ar7id: theAr7id,
     };
     // SAVING TO DATABASE--------------------------------------------------------------------------------------------------------------------------------------
     await userDataModelMongoDbMongoose.create(dataForSavingToDatabase);
@@ -74,9 +77,11 @@ const signInController = async (
     const matchedUsers = await userDataModelMongoDbMongoose.find({
       userEmail: userEmail,
     });
+
     if (matchedUsers.length < 1) {
       throw new Error("No User is Registered with this Email!");
     }
+
     // CHECK IF PASSWORD IS CORRECT------------------------------------------------------------------------------------------------
     const hashedPassword = matchedUsers[0].password;
     const isPasswordCorrect = await checkPassword(password, hashedPassword);
@@ -89,9 +94,10 @@ const signInController = async (
       matchedUsers[0].toObject();
     delete userDataForClientSide.password;
     delete userDataForClientSide._id;
-    console.log(userDataForClientSide);
 
-    const authenticationToken = jwt.sign({ userEmail }, JWT_SECRET_KEY);
+    const { ar7id } = matchedUsers[0];
+
+    const authenticationToken = jwt.sign({ ar7id }, JWT_SECRET_KEY);
     response.status(200).send({
       message: "Signing In Successful.",
       authenticationToken: authenticationToken,
@@ -115,9 +121,10 @@ const authenticateUserWithTokenController = async (
       authenticationToken,
       JWT_SECRET_KEY
     ) as JwtPayload;
-    const { userEmail } = processedData;
+
+    const ar7idOfToken = processedData.ar7id;
     const userDataSavedOnDatabase = await userDataModelMongoDbMongoose.find({
-      userEmail: userEmail,
+      ar7id: ar7idOfToken,
     });
 
     let userDataForClientSide: userDataForClientSideType;
@@ -141,10 +148,12 @@ const getSellerDetailsOfProductsForClientSideController = async (
 ) => {
   try {
     const receivedData = await request.body;
-    const { authenticationToken, sellerEmail } = receivedData;
+    const { authenticationToken, ar7idOfTheSeller } = receivedData;
+    await jwt.verify(authenticationToken, JWT_SECRET_KEY);
+
     const sellerDetailsSavedOnDatabase =
       await userDataModelMongoDbMongoose.find({
-        userEmail: sellerEmail,
+        ar7id: ar7idOfTheSeller,
       });
     const sellerDetails =
       sellerDetailsSavedOnDatabase[0].toObject() as userDataForClientSideType;
@@ -167,3 +176,4 @@ export {
   authenticateUserWithTokenController,
   getSellerDetailsOfProductsForClientSideController,
 };
+//

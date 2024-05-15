@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.reportsDataModelMongoDbMongoose = exports.productsToBeApprovedDataModelMongoDbMongoose = exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
@@ -51,6 +51,11 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         required: false,
     },
+    ar7id: {
+        type: String,
+        required: true,
+        unique: true,
+    },
 });
 const productSchema = new mongoose_1.default.Schema({
     productName: {
@@ -61,7 +66,7 @@ const productSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    sellerEmail: {
+    ar7idOfTheSeller: {
         type: String,
         required: true,
     },
@@ -108,7 +113,7 @@ const productSchema = new mongoose_1.default.Schema({
     },
 });
 const likesSchema = new mongoose_1.default.Schema({
-    emailOfLikeGiver: {
+    ar7idOfLikeGiver: {
         type: String,
         required: true,
     },
@@ -123,11 +128,11 @@ const likesSchema = new mongoose_1.default.Schema({
     },
 });
 const followerSchema = new mongoose_1.default.Schema({
-    emailOfThePersonWhoIsGettingFollowed: {
+    ar7idOfThePersonWhoIsGettingFollowed: {
         type: String,
         required: true,
     },
-    emailOfThePersonWhoIsFollowing: {
+    ar7idOfThePersonWhoIsFollowing: {
         type: String,
         required: true,
         unique: true,
@@ -138,35 +143,49 @@ const followerSchema = new mongoose_1.default.Schema({
     },
 });
 const commentSchema = new mongoose_1.default.Schema({
-    idOfCommentGiver: {
+    ar7idOfCommentGiver: {
         type: String,
         required: true,
     },
-    idOfSubjectWhoReceivedComment: {
+    ar7idOfSubjectWhoReceivedComment: {
         type: String,
         required: true,
     },
     comment: {},
 });
 const selllerSchema = new mongoose_1.default.Schema({
-    sellerEmail: {
+    ar7idOfSeller: {
         type: String,
         required: true,
         unique: true,
     },
 });
 const adminSchema = new mongoose_1.default.Schema({
-    emailOfTheAdmin: {
+    ar7idOfTheAdmin: {
         type: String,
         required: true,
         unique: true,
     },
 });
 const bannedUserSchema = new mongoose_1.default.Schema({
-    emailOfTheBannedUser: {
+    ar7idOfTheBannedUser: {
         type: String,
         required: true,
         unique: true,
+    },
+});
+const reportsSchema = new mongoose_1.default.Schema({
+    ar7idOfThePersonWhoReported: {
+        type: String,
+        required: true,
+    },
+    reportMessage: {
+        type: String,
+        required: true,
+    },
+    unixTimeStamp: {
+        type: Number,
+        required: true,
     },
 });
 // DATAMODELS STARTS HERE---------------------------------------------------------------------------------------------------------------------------------------
@@ -185,3 +204,7 @@ const adminDataModelMongoDbMongoose = mongoose_1.default.model("adminData", admi
 exports.adminDataModelMongoDbMongoose = adminDataModelMongoDbMongoose;
 const bannedUserDataModelMongoDbMongoose = mongoose_1.default.model("bannedUsersData", bannedUserSchema);
 exports.bannedUserDataModelMongoDbMongoose = bannedUserDataModelMongoDbMongoose;
+const productsToBeApprovedDataModelMongoDbMongoose = mongoose_1.default.model("productsToBeApprovedData", productSchema);
+exports.productsToBeApprovedDataModelMongoDbMongoose = productsToBeApprovedDataModelMongoDbMongoose;
+const reportsDataModelMongoDbMongoose = mongoose_1.default.model("reportsMadeByUsersData", reportsSchema);
+exports.reportsDataModelMongoDbMongoose = reportsDataModelMongoDbMongoose;

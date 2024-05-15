@@ -26,7 +26,7 @@ type userDataForClientSideType = {
   imponexpoAccountURL: string;
 };
 type processedDataOfAuthenticationToken = {
-  userEmail: string;
+  ar7id: string;
   iat: number;
 };
 export type {

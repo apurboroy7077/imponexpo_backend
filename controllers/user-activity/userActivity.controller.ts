@@ -6,7 +6,9 @@ import {
   followersDataModelMongoDbMongoose,
   likeDatatypeForSavingInDatabase,
   likesDataModelMongoDbMongoose,
+  reportsDataModelMongoDbMongoose,
 } from "../../models/mongodb/schemas.model";
+import { getUserAr7idFromToken } from "../../custom-functions/authentication/authentication";
 const likeSomethingController = async (
   request: express.Request,
   response: express.Response
@@ -19,14 +21,14 @@ const likeSomethingController = async (
       authenticationToken,
       JWT_SECRET_KEY
     ) as processedDataOfAuthenticationToken;
-    const likeGiverEmail = processedTokenData.userEmail;
+    const ar7idOfLikeGiver = processedTokenData.ar7id;
     const unixTimeStamp = Math.floor(Date.now() / 1000);
-    const likeDataForSavingInDatabase: likeDatatypeForSavingInDatabase = {
-      emailOfLikeGiver: likeGiverEmail,
+
+    await likesDataModelMongoDbMongoose.create({
+      ar7idOfLikeGiver: ar7idOfLikeGiver,
       ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
       unixTimeStamp: unixTimeStamp,
-    };
-    await likesDataModelMongoDbMongoose.create(likeDataForSavingInDatabase);
+    });
 
     response.status(200).send({
       message: "Product is Liked Successfully",
@@ -49,9 +51,9 @@ const dislikeSomethingController = async (
       authenticationToken,
       JWT_SECRET_KEY
     ) as processedDataOfAuthenticationToken;
-    const likeGiverEmail = processedTokenData.userEmail;
+    const likeGiverAr7id = processedTokenData.ar7id;
     await likesDataModelMongoDbMongoose.deleteOne({
-      emailOfLikeGiver: likeGiverEmail,
+      ar7idOfLikeGiver: likeGiverAr7id,
       ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
     });
 
@@ -76,9 +78,9 @@ const checkLikeController = async (
       authenticationToken,
       JWT_SECRET_KEY
     ) as processedDataOfAuthenticationToken;
-    const userEmail = processedData.userEmail;
+    const ar7idOfTheUser = processedData.ar7id;
     const likeDataSavedOnDatabase = await likesDataModelMongoDbMongoose.find({
-      emailOfLikeGiver: userEmail,
+      ar7idOfLikeGiver: ar7idOfTheUser,
       ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
     });
 
@@ -144,22 +146,40 @@ const followSomeoneController = async (
     response.status(500).send(error.message);
   }
 };
+const makingReportsController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { authenticationToken } = receivedData;
+    const processedDataOfToken = jwt.verify(
+      authenticationToken,
+      JWT_SECRET_KEY
+    ) as processedDataOfAuthenticationToken;
+    const ar7idOfTheUser = processedDataOfToken.ar7id;
+    const { reportMessage } = receivedData;
+    const unixTimeStamp = Math.floor(Date.now() / 1000);
+    await reportsDataModelMongoDbMongoose.create({
+      ar7idOfThePersonWhoReported: ar7idOfTheUser,
+      reportMessage: reportMessage,
+      unixTimeStamp: unixTimeStamp,
+    });
+
+    response.status(200).send({
+      message: "Report Made Successfully.",
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   likeSomethingController,
   checkLikeController,
   dislikeSomethingController,
   getTotalNumberOfLikesController,
   followSomeoneController,
+  makingReportsController,
 };
-
-// {
-//   const newFilename = `${Date.now()}-${productImage.originalFilename}`;
-//   const uploadDir = path.join(__dirname, "uploads");
-//   if (!existsSync(uploadDir)) {
-//     mkdirSync(uploadDir);
-//   }
-
-//   const newPath = path.join(uploadDir, newFilename);
-
-//   renameSync(productImage.filepath, newPath);
-// }

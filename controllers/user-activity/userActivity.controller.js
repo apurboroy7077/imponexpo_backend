@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.followSomeoneController = exports.getTotalNumberOfLikesController = exports.dislikeSomethingController = exports.checkLikeController = exports.likeSomethingController = void 0;
+exports.makingReportsController = exports.followSomeoneController = exports.getTotalNumberOfLikesController = exports.dislikeSomethingController = exports.checkLikeController = exports.likeSomethingController = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
@@ -21,14 +21,13 @@ const likeSomethingController = (request, response) => __awaiter(void 0, void 0,
         const receivedData = request.body;
         const { authenticationToken, ar7idOfSubjectThatReceivedLike } = receivedData;
         const processedTokenData = jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
-        const likeGiverEmail = processedTokenData.userEmail;
+        const ar7idOfLikeGiver = processedTokenData.ar7id;
         const unixTimeStamp = Math.floor(Date.now() / 1000);
-        const likeDataForSavingInDatabase = {
-            emailOfLikeGiver: likeGiverEmail,
+        yield schemas_model_1.likesDataModelMongoDbMongoose.create({
+            ar7idOfLikeGiver: ar7idOfLikeGiver,
             ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
             unixTimeStamp: unixTimeStamp,
-        };
-        yield schemas_model_1.likesDataModelMongoDbMongoose.create(likeDataForSavingInDatabase);
+        });
         response.status(200).send({
             message: "Product is Liked Successfully",
         });
@@ -45,9 +44,9 @@ const dislikeSomethingController = (request, response) => __awaiter(void 0, void
         const receivedData = request.body;
         const { authenticationToken, ar7idOfSubjectThatReceivedLike } = receivedData;
         const processedTokenData = jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
-        const likeGiverEmail = processedTokenData.userEmail;
+        const likeGiverAr7id = processedTokenData.ar7id;
         yield schemas_model_1.likesDataModelMongoDbMongoose.deleteOne({
-            emailOfLikeGiver: likeGiverEmail,
+            ar7idOfLikeGiver: likeGiverAr7id,
             ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
         });
         response.status(200).send({
@@ -66,9 +65,9 @@ const checkLikeController = (request, response) => __awaiter(void 0, void 0, voi
         const receivedData = request.body;
         const { ar7idOfSubjectThatReceivedLike, authenticationToken } = receivedData;
         const processedData = jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
-        const userEmail = processedData.userEmail;
+        const ar7idOfTheUser = processedData.ar7id;
         const likeDataSavedOnDatabase = yield schemas_model_1.likesDataModelMongoDbMongoose.find({
-            emailOfLikeGiver: userEmail,
+            ar7idOfLikeGiver: ar7idOfTheUser,
             ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
         });
         let likeStatus = "NOT_LIKED";
@@ -132,12 +131,27 @@ const followSomeoneController = (request, response) => __awaiter(void 0, void 0,
     }
 });
 exports.followSomeoneController = followSomeoneController;
-// {
-//   const newFilename = `${Date.now()}-${productImage.originalFilename}`;
-//   const uploadDir = path.join(__dirname, "uploads");
-//   if (!existsSync(uploadDir)) {
-//     mkdirSync(uploadDir);
-//   }
-//   const newPath = path.join(uploadDir, newFilename);
-//   renameSync(productImage.filepath, newPath);
-// }
+const makingReportsController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = request.body;
+        const { authenticationToken } = receivedData;
+        const processedDataOfToken = jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
+        const ar7idOfTheUser = processedDataOfToken.ar7id;
+        const { reportMessage } = receivedData;
+        const unixTimeStamp = Math.floor(Date.now() / 1000);
+        yield schemas_model_1.reportsDataModelMongoDbMongoose.create({
+            ar7idOfThePersonWhoReported: ar7idOfTheUser,
+            reportMessage: reportMessage,
+            unixTimeStamp: unixTimeStamp,
+        });
+        response.status(200).send({
+            message: "Report Made Successfully.",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.makingReportsController = makingReportsController;

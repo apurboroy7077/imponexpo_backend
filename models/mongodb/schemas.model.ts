@@ -45,6 +45,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  ar7id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
 const productSchema = new mongoose.Schema({
   productName: {
@@ -55,7 +60,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  sellerEmail: {
+  ar7idOfTheSeller: {
     type: String,
     required: true,
   },
@@ -103,7 +108,7 @@ const productSchema = new mongoose.Schema({
   },
 });
 const likesSchema = new mongoose.Schema({
-  emailOfLikeGiver: {
+  ar7idOfLikeGiver: {
     type: String,
     required: true,
   },
@@ -118,11 +123,11 @@ const likesSchema = new mongoose.Schema({
   },
 });
 const followerSchema = new mongoose.Schema({
-  emailOfThePersonWhoIsGettingFollowed: {
+  ar7idOfThePersonWhoIsGettingFollowed: {
     type: String,
     required: true,
   },
-  emailOfThePersonWhoIsFollowing: {
+  ar7idOfThePersonWhoIsFollowing: {
     type: String,
     required: true,
     unique: true,
@@ -133,35 +138,49 @@ const followerSchema = new mongoose.Schema({
   },
 });
 const commentSchema = new mongoose.Schema({
-  idOfCommentGiver: {
+  ar7idOfCommentGiver: {
     type: String,
     required: true,
   },
-  idOfSubjectWhoReceivedComment: {
+  ar7idOfSubjectWhoReceivedComment: {
     type: String,
     required: true,
   },
   comment: {},
 });
 const selllerSchema = new mongoose.Schema({
-  sellerEmail: {
+  ar7idOfSeller: {
     type: String,
     required: true,
     unique: true,
   },
 });
 const adminSchema = new mongoose.Schema({
-  emailOfTheAdmin: {
+  ar7idOfTheAdmin: {
     type: String,
     required: true,
     unique: true,
   },
 });
 const bannedUserSchema = new mongoose.Schema({
-  emailOfTheBannedUser: {
+  ar7idOfTheBannedUser: {
     type: String,
     required: true,
     unique: true,
+  },
+});
+const reportsSchema = new mongoose.Schema({
+  ar7idOfThePersonWhoReported: {
+    type: String,
+    required: true,
+  },
+  reportMessage: {
+    type: String,
+    required: true,
+  },
+  unixTimeStamp: {
+    type: Number,
+    required: true,
   },
 });
 // DATAMODELS STARTS HERE---------------------------------------------------------------------------------------------------------------------------------------
@@ -188,6 +207,14 @@ const bannedUserDataModelMongoDbMongoose = mongoose.model(
   "bannedUsersData",
   bannedUserSchema
 );
+const productsToBeApprovedDataModelMongoDbMongoose = mongoose.model(
+  "productsToBeApprovedData",
+  productSchema
+);
+const reportsDataModelMongoDbMongoose = mongoose.model(
+  "reportsMadeByUsersData",
+  reportsSchema
+);
 export {
   userDataModelMongoDbMongoose,
   productsDataModelMongoDbMongoose,
@@ -196,12 +223,14 @@ export {
   sellersDataModelMongoDbMongoose,
   adminDataModelMongoDbMongoose,
   bannedUserDataModelMongoDbMongoose,
+  productsToBeApprovedDataModelMongoDbMongoose,
+  reportsDataModelMongoDbMongoose,
 };
 
 type productsDataTypeForSavingInDatabase = {
   productName: string;
   productCategory: string;
-  sellerEmail: string;
+  ar7idOfTheSeller: string;
   price: string;
   priceType: string;
   productHashtags: string;
@@ -219,8 +248,8 @@ type likeDatatypeForSavingInDatabase = {
   unixTimeStamp: number;
 };
 type followersDataTypeForSavingInDatabase = {
-  emailOfThePersonWhoIsGettingFollowed: string;
-  emailOfThePersonWhoIsFollowing: string;
+  ar7idOfThePersonWhoIsGettingFollowed: string;
+  ar7idOfThePersonWhoIsFollowing: string;
   unixTimeStamp: number;
 };
 export type {

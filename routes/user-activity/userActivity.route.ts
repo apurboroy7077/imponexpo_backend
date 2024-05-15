@@ -5,6 +5,7 @@ import {
   SUB_ADDRESS_OF_FOLLOW_SOMEONE_API,
   SUB_ADDRESS_OF_GETTING_TOTAL_NUMBER_OF_LIKES_API,
   SUB_ADDRESS_OF_LIKE_SOMETHING_API,
+  SUB_ADDRESS_OF_MAKING_REPORT_API,
 } from "../../data/EnvironmentVariables";
 import {
   checkLikeController,
@@ -12,6 +13,7 @@ import {
   followSomeoneController,
   getTotalNumberOfLikesController,
   likeSomethingController,
+  makingReportsController,
 } from "../../controllers/user-activity/userActivity.controller";
 
 const userActivityRouter = express.Router();
@@ -31,5 +33,9 @@ userActivityRouter.post(
 userActivityRouter.post(
   SUB_ADDRESS_OF_FOLLOW_SOMEONE_API,
   followSomeoneController
+);
+userActivityRouter.post(
+  SUB_ADDRESS_OF_MAKING_REPORT_API,
+  makingReportsController
 );
 export { userActivityRouter };

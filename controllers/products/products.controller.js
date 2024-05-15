@@ -46,10 +46,10 @@ const productsUploadController = (request, response) => __awaiter(void 0, void 0
         const productImage = files.productImage[0];
         const authenticationTokenMain = authenticationToken[0];
         const originCountryMain = originCountry[0];
-        let userEmail;
+        let ar7idOfTheUser;
         try {
             const processedTokenData = jsonwebtoken_1.default.verify(authenticationTokenMain, EnvironmentVariables_1.JWT_SECRET_KEY);
-            userEmail = processedTokenData.userEmail;
+            ar7idOfTheUser = processedTokenData.ar7id;
         }
         catch (error) {
             throw new Error("Authentication Failed");
@@ -69,7 +69,7 @@ const productsUploadController = (request, response) => __awaiter(void 0, void 0
         const processedProductDataForSavingToDatabase = {
             productName: productNameMain,
             productCategory: productCategoryMain,
-            sellerEmail: userEmail,
+            ar7idOfTheSeller: ar7idOfTheUser,
             price: productPriceMain,
             priceType: priceTypeMain,
             productHashtags: productHashtagsMain,

@@ -17,6 +17,7 @@ const schemas_model_1 = require("../../models/mongodb/schemas.model");
 const hashingPassword_1 = require("../../custom-functions/password-hashing/hashingPassword");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
+const ar7id_1 = __importDefault(require("../../custom-functions/ar7id/ar7id"));
 const signUpController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const receivedData = yield request.body;
@@ -31,6 +32,7 @@ const signUpController = (request, response) => __awaiter(void 0, void 0, void 0
         const hashedPassword = yield (0, hashingPassword_1.hashMyPassword)(password);
         // PROCESSING DATA FOR DATABASE----------------------------------------------------------------------------------------------------------------
         const userFullNameFinal = `${firstName} ${lastName}`;
+        const theAr7id = (0, ar7id_1.default)();
         const dataForSavingToDatabase = {
             userFullName: userFullNameFinal,
             userEmail: userEmail,
@@ -42,6 +44,7 @@ const signUpController = (request, response) => __awaiter(void 0, void 0, void 0
             countryRegion: countryRegion,
             reasonForSignup: reasonForSignup,
             imponexpoAccountURL: imponexpoAccountURL,
+            ar7id: theAr7id,
         };
         // SAVING TO DATABASE--------------------------------------------------------------------------------------------------------------------------------------
         yield schemas_model_1.userDataModelMongoDbMongoose.create(dataForSavingToDatabase);
@@ -76,8 +79,8 @@ const signInController = (request, response) => __awaiter(void 0, void 0, void 0
         let userDataForClientSide = matchedUsers[0].toObject();
         delete userDataForClientSide.password;
         delete userDataForClientSide._id;
-        console.log(userDataForClientSide);
-        const authenticationToken = jsonwebtoken_1.default.sign({ userEmail }, EnvironmentVariables_1.JWT_SECRET_KEY);
+        const { ar7id } = matchedUsers[0];
+        const authenticationToken = jsonwebtoken_1.default.sign({ ar7id }, EnvironmentVariables_1.JWT_SECRET_KEY);
         response.status(200).send({
             message: "Signing In Successful.",
             authenticationToken: authenticationToken,
@@ -96,9 +99,9 @@ const authenticateUserWithTokenController = (request, response) => __awaiter(voi
         const receivedData = yield request.body;
         const authenticationToken = receivedData.authenticationToken;
         const processedData = jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
-        const { userEmail } = processedData;
+        const ar7idOfToken = processedData.ar7id;
         const userDataSavedOnDatabase = yield schemas_model_1.userDataModelMongoDbMongoose.find({
-            userEmail: userEmail,
+            ar7id: ar7idOfToken,
         });
         let userDataForClientSide;
         userDataForClientSide = userDataSavedOnDatabase[0].toObject();
@@ -119,9 +122,10 @@ exports.authenticateUserWithTokenController = authenticateUserWithTokenControlle
 const getSellerDetailsOfProductsForClientSideController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const receivedData = yield request.body;
-        const { authenticationToken, sellerEmail } = receivedData;
+        const { authenticationToken, ar7idOfTheSeller } = receivedData;
+        yield jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY);
         const sellerDetailsSavedOnDatabase = yield schemas_model_1.userDataModelMongoDbMongoose.find({
-            userEmail: sellerEmail,
+            ar7id: ar7idOfTheSeller,
         });
         const sellerDetails = sellerDetailsSavedOnDatabase[0].toObject();
         delete sellerDetails.password;
@@ -138,3 +142,4 @@ const getSellerDetailsOfProductsForClientSideController = (request, response) =>
     }
 });
 exports.getSellerDetailsOfProductsForClientSideController = getSellerDetailsOfProductsForClientSideController;
+//

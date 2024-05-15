@@ -70,13 +70,13 @@ const productsUploadController = async (
     const productImage = files.productImage[0];
     const authenticationTokenMain = authenticationToken[0];
     const originCountryMain = originCountry[0];
-    let userEmail;
+    let ar7idOfTheUser;
     try {
       const processedTokenData = jwt.verify(
         authenticationTokenMain,
         JWT_SECRET_KEY
       ) as processedDataOfAuthenticationToken;
-      userEmail = processedTokenData.userEmail;
+      ar7idOfTheUser = processedTokenData.ar7id;
     } catch (error) {
       throw new Error("Authentication Failed");
     }
@@ -106,7 +106,7 @@ const productsUploadController = async (
       {
         productName: productNameMain,
         productCategory: productCategoryMain,
-        sellerEmail: userEmail,
+        ar7idOfTheSeller: ar7idOfTheUser,
         price: productPriceMain,
         priceType: priceTypeMain,
         productHashtags: productHashtagsMain,
