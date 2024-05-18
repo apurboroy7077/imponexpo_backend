@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSellerDetailsOfProductsForClientSideController = exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
+exports.gettingUserDetailsForClientsController = exports.getSellerDetailsOfProductsForClientSideController = exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
 const hashingPassword_1 = require("../../custom-functions/password-hashing/hashingPassword");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -142,4 +142,25 @@ const getSellerDetailsOfProductsForClientSideController = (request, response) =>
     }
 });
 exports.getSellerDetailsOfProductsForClientSideController = getSellerDetailsOfProductsForClientSideController;
+const gettingUserDetailsForClientsController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = request.body;
+        const { ar7idOfTheUser } = receivedData;
+        const userDataSavedOnDatabase = yield schemas_model_1.userDataModelMongoDbMongoose.findOne({
+            ar7id: ar7idOfTheUser,
+        });
+        const processedDataForClient = userDataSavedOnDatabase === null || userDataSavedOnDatabase === void 0 ? void 0 : userDataSavedOnDatabase.toObject();
+        delete processedDataForClient.password;
+        response.status(200).send({
+            message: "Received User Details Request Successfully",
+            userData: processedDataForClient,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.gettingUserDetailsForClientsController = gettingUserDetailsForClientsController;
 //

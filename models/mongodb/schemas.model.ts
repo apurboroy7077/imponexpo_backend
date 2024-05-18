@@ -115,28 +115,37 @@ const likesSchema = new mongoose.Schema({
   ar7idOfSubjectThatReceivedLike: {
     type: String,
     required: true,
-    unique: true,
   },
-  unixTimeStamp: {
+  timeStamp: {
     type: Number,
     required: true,
   },
 });
+likesSchema.index(
+  { ar7idOfLikeGiver: 1, ar7idOfSubjectThatReceivedLike: 1 },
+  { unique: true }
+);
 const followerSchema = new mongoose.Schema({
-  ar7idOfThePersonWhoIsGettingFollowed: {
+  ar7idOfTheSubjectWhichIsGettingFollowed: {
     type: String,
     required: true,
   },
-  ar7idOfThePersonWhoIsFollowing: {
+  ar7idOfTheSubjectWhichIsFollowing: {
     type: String,
     required: true,
-    unique: true,
   },
-  unixTimeStamp: {
+  timeStamp: {
     type: Number,
     required: true,
   },
 });
+followerSchema.index(
+  {
+    ar7idOfTheSubjectWhichIsGettingFollowed: 1,
+    ar7idOfTheSubjectWhichIsFollowing: 1,
+  },
+  { unique: true }
+);
 const commentSchema = new mongoose.Schema({
   ar7idOfCommentGiver: {
     type: String,
@@ -146,8 +155,17 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  comment: {},
+  comment: {
+    type: String,
+    required: true,
+  },
+  timeStamp: {
+    type: String,
+    required: true,
+  },
 });
+commentSchema.index({ ar7idOfSubjectWhoReceivedComment: 1 });
+commentSchema.index({ ar7idOfCommentGiver: 1 });
 const selllerSchema = new mongoose.Schema({
   ar7idOfSeller: {
     type: String,
@@ -178,7 +196,7 @@ const reportsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  unixTimeStamp: {
+  timeStamp: {
     type: Number,
     required: true,
   },
@@ -225,6 +243,7 @@ export {
   bannedUserDataModelMongoDbMongoose,
   productsToBeApprovedDataModelMongoDbMongoose,
   reportsDataModelMongoDbMongoose,
+  commentsDataModelMongoDbMongoose,
 };
 
 type productsDataTypeForSavingInDatabase = {
@@ -245,12 +264,12 @@ type productsDataTypeForSavingInDatabase = {
 type likeDatatypeForSavingInDatabase = {
   emailOfLikeGiver: string;
   ar7idOfSubjectThatReceivedLike: string;
-  unixTimeStamp: number;
+  timeStamp: number;
 };
 type followersDataTypeForSavingInDatabase = {
   ar7idOfThePersonWhoIsGettingFollowed: string;
   ar7idOfThePersonWhoIsFollowing: string;
-  unixTimeStamp: number;
+  timeStamp: number;
 };
 export type {
   productsDataTypeForSavingInDatabase,

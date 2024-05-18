@@ -170,10 +170,37 @@ const getSellerDetailsOfProductsForClientSideController = async (
     response.status(500).send(error.message);
   }
 };
+const gettingUserDetailsForClientsController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { ar7idOfTheUser } = receivedData;
+    const userDataSavedOnDatabase = await userDataModelMongoDbMongoose.findOne({
+      ar7id: ar7idOfTheUser,
+    });
+
+    const processedDataForClient =
+      userDataSavedOnDatabase?.toObject() as userDataForClientSideType;
+
+    delete processedDataForClient.password;
+
+    response.status(200).send({
+      message: "Received User Details Request Successfully",
+      userData: processedDataForClient,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   signUpController,
   signInController,
   authenticateUserWithTokenController,
   getSellerDetailsOfProductsForClientSideController,
+  gettingUserDetailsForClientsController,
 };
 //

@@ -13,3 +13,4 @@ authenticationRouter.post("/authentication/sign-up", authentiction_controller_1.
 authenticationRouter.post("/authentication/sign-in", authentiction_controller_1.signInController);
 authenticationRouter.post("/authentication/authenticate-user-with-token", authentiction_controller_1.authenticateUserWithTokenController);
 authenticationRouter.post(EnvironmentVariables_1.SUB_ADDRESS_OF_GETTING_SELLER_DETAILS_FOR_CLIENT_SIDE_API, authentiction_controller_1.getSellerDetailsOfProductsForClientSideController);
+authenticationRouter.post(EnvironmentVariables_1.SUB_ADDRESS_OF_GETTING_USER_DETAILS_FOR_CLIENTS_API, authentiction_controller_1.gettingUserDetailsForClientsController);

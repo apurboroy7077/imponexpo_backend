@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reportsDataModelMongoDbMongoose = exports.productsToBeApprovedDataModelMongoDbMongoose = exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.commentsDataModelMongoDbMongoose = exports.reportsDataModelMongoDbMongoose = exports.productsToBeApprovedDataModelMongoDbMongoose = exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
@@ -120,28 +120,31 @@ const likesSchema = new mongoose_1.default.Schema({
     ar7idOfSubjectThatReceivedLike: {
         type: String,
         required: true,
-        unique: true,
     },
-    unixTimeStamp: {
+    timeStamp: {
         type: Number,
         required: true,
     },
 });
+likesSchema.index({ ar7idOfLikeGiver: 1, ar7idOfSubjectThatReceivedLike: 1 }, { unique: true });
 const followerSchema = new mongoose_1.default.Schema({
-    ar7idOfThePersonWhoIsGettingFollowed: {
+    ar7idOfTheSubjectWhichIsGettingFollowed: {
         type: String,
         required: true,
     },
-    ar7idOfThePersonWhoIsFollowing: {
+    ar7idOfTheSubjectWhichIsFollowing: {
         type: String,
         required: true,
-        unique: true,
     },
-    unixTimeStamp: {
+    timeStamp: {
         type: Number,
         required: true,
     },
 });
+followerSchema.index({
+    ar7idOfTheSubjectWhichIsGettingFollowed: 1,
+    ar7idOfTheSubjectWhichIsFollowing: 1,
+}, { unique: true });
 const commentSchema = new mongoose_1.default.Schema({
     ar7idOfCommentGiver: {
         type: String,
@@ -151,8 +154,17 @@ const commentSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    comment: {},
+    comment: {
+        type: String,
+        required: true,
+    },
+    timeStamp: {
+        type: String,
+        required: true,
+    },
 });
+commentSchema.index({ ar7idOfSubjectWhoReceivedComment: 1 });
+commentSchema.index({ ar7idOfCommentGiver: 1 });
 const selllerSchema = new mongoose_1.default.Schema({
     ar7idOfSeller: {
         type: String,
@@ -183,7 +195,7 @@ const reportsSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    unixTimeStamp: {
+    timeStamp: {
         type: Number,
         required: true,
     },
@@ -196,6 +208,7 @@ exports.productsDataModelMongoDbMongoose = productsDataModelMongoDbMongoose;
 const likesDataModelMongoDbMongoose = mongoose_1.default.model("likesData", likesSchema);
 exports.likesDataModelMongoDbMongoose = likesDataModelMongoDbMongoose;
 const commentsDataModelMongoDbMongoose = mongoose_1.default.model("commentsData", commentSchema);
+exports.commentsDataModelMongoDbMongoose = commentsDataModelMongoDbMongoose;
 const followersDataModelMongoDbMongoose = mongoose_1.default.model("followersData", followerSchema);
 exports.followersDataModelMongoDbMongoose = followersDataModelMongoDbMongoose;
 const sellersDataModelMongoDbMongoose = mongoose_1.default.model("sellerData", selllerSchema);

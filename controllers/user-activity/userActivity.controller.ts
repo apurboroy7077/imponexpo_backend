@@ -3,12 +3,16 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../../data/EnvironmentVariables";
 import { processedDataOfAuthenticationToken } from "../../data/types";
 import {
+  commentsDataModelMongoDbMongoose,
   followersDataModelMongoDbMongoose,
   likeDatatypeForSavingInDatabase,
   likesDataModelMongoDbMongoose,
   reportsDataModelMongoDbMongoose,
 } from "../../models/mongodb/schemas.model";
-import { getUserAr7idFromToken } from "../../custom-functions/authentication/authentication";
+import {
+  authorizeAndGiveReceivedData,
+  getUserAr7idFromToken,
+} from "../../custom-functions/authentication/authentication";
 const likeSomethingController = async (
   request: express.Request,
   response: express.Response
@@ -22,12 +26,12 @@ const likeSomethingController = async (
       JWT_SECRET_KEY
     ) as processedDataOfAuthenticationToken;
     const ar7idOfLikeGiver = processedTokenData.ar7id;
-    const unixTimeStamp = Math.floor(Date.now() / 1000);
+    const timeStamp = Date.now();
 
     await likesDataModelMongoDbMongoose.create({
       ar7idOfLikeGiver: ar7idOfLikeGiver,
       ar7idOfSubjectThatReceivedLike: ar7idOfSubjectThatReceivedLike,
-      unixTimeStamp: unixTimeStamp,
+      timeStamp: timeStamp,
     });
 
     response.status(200).send({
@@ -127,18 +131,97 @@ const followSomeoneController = async (
   response: express.Response
 ) => {
   try {
-    const receivedData = request.body;
-    // const { authenticationToken, emailOfThePersonWhoIsFollowing } =
-    //   receivedData;
-    // const processedTokenData = jwt.verify(
-    //   authenticationToken,
-    //   JWT_SECRET_KEY
-    // ) as processedDataOfAuthenticationToken;
-    // const likeGiverEmail = processedTokenData.userEmail;
-    // const unixTimeStamp = Math.floor(Date.now() / 1000);
-    console.log("Follow Someone Request Received");
+    const receivedData = authorizeAndGiveReceivedData(request);
+    const { ar7idOfTheSubjectWhichWillBeFollowed, ar7idOfUserWhoRequested } =
+      receivedData;
+    const timeStamp = Date.now();
+    console.log(receivedData);
+    await followersDataModelMongoDbMongoose.create({
+      ar7idOfTheSubjectWhichIsFollowing: ar7idOfUserWhoRequested,
+      ar7idOfTheSubjectWhichIsGettingFollowed:
+        ar7idOfTheSubjectWhichWillBeFollowed,
+      timeStamp: timeStamp,
+    });
     response.status(200).send({
-      message: "Product is Liked Successfully",
+      message: "Followed Successfully",
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const unfollowSomeoneController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = authorizeAndGiveReceivedData(request);
+
+    const { ar7idOfTheSubjectWhichWillBeFollowed, ar7idOfUserWhoRequested } =
+      receivedData;
+    await followersDataModelMongoDbMongoose.deleteOne({
+      ar7idOfTheSubjectWhichIsFollowing: ar7idOfUserWhoRequested,
+      ar7idOfTheSubjectWhichIsGettingFollowed:
+        ar7idOfTheSubjectWhichWillBeFollowed,
+    });
+
+    response.status(200).send({
+      message: "Unfollowed Successfully",
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const checkingIfASubjectIsFollowingSomethingOrNotController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = authorizeAndGiveReceivedData(request);
+    const { ar7idOfSubjectWhichIsGettingFollowed, ar7idOfUserWhoRequested } =
+      receivedData;
+
+    const dataInDatabase = await followersDataModelMongoDbMongoose.find({
+      ar7idOfTheSubjectWhichIsGettingFollowed:
+        ar7idOfSubjectWhichIsGettingFollowed,
+      ar7idOfTheSubjectWhichIsFollowing: ar7idOfUserWhoRequested,
+    });
+    let followingStatus = "";
+    if (dataInDatabase.length > 0) {
+      followingStatus = "FOLLOWING";
+    } else {
+      followingStatus = "NOT_FOLLOWING";
+    }
+
+    response.status(200).send({
+      message: "Follow check complete.",
+      followingStatus: followingStatus,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const gettingTotalNumberOfFollowersOfASubjectController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { ar7idOfSubjectWhichIsGettingFollowed } = receivedData;
+    const totalFollowers =
+      await followersDataModelMongoDbMongoose.countDocuments({
+        ar7idOfTheSubjectWhichIsGettingFollowed:
+          ar7idOfSubjectWhichIsGettingFollowed,
+      });
+    console.log(totalFollowers);
+    response.status(200).send({
+      message: "Fetched Total Numbers Of Followers Successfully",
+      totalFollowersOfTheUser: totalFollowers,
     });
   } catch (error: any) {
     console.log(error);
@@ -159,11 +242,11 @@ const makingReportsController = async (
     ) as processedDataOfAuthenticationToken;
     const ar7idOfTheUser = processedDataOfToken.ar7id;
     const { reportMessage } = receivedData;
-    const unixTimeStamp = Math.floor(Date.now() / 1000);
+    const timeStamp = Date.now();
     await reportsDataModelMongoDbMongoose.create({
       ar7idOfThePersonWhoReported: ar7idOfTheUser,
       reportMessage: reportMessage,
-      unixTimeStamp: unixTimeStamp,
+      timeStamp: timeStamp,
     });
 
     response.status(200).send({
@@ -175,11 +258,82 @@ const makingReportsController = async (
     response.status(500).send(error.message);
   }
 };
+const givingCommentController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = authorizeAndGiveReceivedData(request);
+    const {
+      ar7idOfTheCommentPopupSubject,
+      givenComment,
+      ar7idOfUserWhoRequested,
+    } = receivedData;
+
+    const commentSubjectAr7id = ar7idOfTheCommentPopupSubject;
+    const commentGiverAr7id = ar7idOfUserWhoRequested;
+    const timeStamp_ = Date.now();
+    await commentsDataModelMongoDbMongoose.create({
+      ar7idOfCommentGiver: commentGiverAr7id,
+      ar7idOfSubjectWhoReceivedComment: commentSubjectAr7id,
+      comment: givenComment,
+      timeStamp: timeStamp_,
+    });
+    response.status(200).send({
+      message: "Comment Made Successfully",
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const gettingCommentsOfSomethingController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { ar7idOfTheSubject, paginationSerial } = receivedData;
+    const commentsSerial = Number(paginationSerial);
+    let commentsFrom = (commentsSerial - 1) * 10;
+    const commentsTo = paginationSerial * 10;
+    const commentsLimit = 10;
+    const numberOfComments =
+      await commentsDataModelMongoDbMongoose.countDocuments({
+        ar7idOfSubjectWhoReceivedComment: ar7idOfTheSubject,
+      });
+    let startingPoint = 0;
+    if (numberOfComments > 10) {
+      startingPoint = numberOfComments - paginationSerial * 10;
+    }
+    const commentsData = await commentsDataModelMongoDbMongoose
+      .find({ ar7idOfSubjectWhoReceivedComment: ar7idOfTheSubject })
+      .skip(startingPoint)
+      .limit(commentsLimit);
+
+    response.status(200).send({
+      message: "Comment Made Successfully",
+      commentsData: commentsData,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+
 export {
   likeSomethingController,
   checkLikeController,
   dislikeSomethingController,
   getTotalNumberOfLikesController,
   followSomeoneController,
+  unfollowSomeoneController,
   makingReportsController,
+  givingCommentController,
+  gettingCommentsOfSomethingController,
+  checkingIfASubjectIsFollowingSomethingOrNotController,
+  gettingTotalNumberOfFollowersOfASubjectController,
 };
+//
