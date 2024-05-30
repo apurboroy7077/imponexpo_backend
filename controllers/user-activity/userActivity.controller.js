@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gettingTotalNumberOfFollowersOfASubjectController = exports.checkingIfASubjectIsFollowingSomethingOrNotController = exports.gettingCommentsOfSomethingController = exports.givingCommentController = exports.makingReportsController = exports.unfollowSomeoneController = exports.followSomeoneController = exports.getTotalNumberOfLikesController = exports.dislikeSomethingController = exports.checkLikeController = exports.likeSomethingController = void 0;
+exports.searching1Controller = exports.gettingTotalNumberOfFollowersOfASubjectController = exports.checkingIfASubjectIsFollowingSomethingOrNotController = exports.gettingCommentsOfSomethingController = exports.givingCommentController = exports.makingReportsController = exports.unfollowSomeoneController = exports.followSomeoneController = exports.getTotalNumberOfLikesController = exports.dislikeSomethingController = exports.checkLikeController = exports.likeSomethingController = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
@@ -276,4 +276,25 @@ const gettingCommentsOfSomethingController = (request, response) => __awaiter(vo
     }
 });
 exports.gettingCommentsOfSomethingController = gettingCommentsOfSomethingController;
+const searching1Controller = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = request.body;
+        const { typenWords } = receivedData;
+        const matchedProducts = yield schemas_model_1.productsDataModelMongoDbMongoose
+            .find({
+            $or: [{ productName: { $regex: new RegExp(typenWords, "i") } }],
+        })
+            .limit(10);
+        response.status(200).send({
+            message: "Searched Successfully.",
+            searchResult: matchedProducts,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.searching1Controller = searching1Controller;
 //

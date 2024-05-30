@@ -235,6 +235,27 @@ const gettingReportsMadeByUserController = async (
     response.status(500).send(error.message);
   }
 };
+const gettingUsersDataController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    // CHECK IF IS ADMIN---------------------------------------------------------------------------------------------------------
+    await checkIsAdmin(request);
+    // GET REPORTS FROM DATABASE------------------------------------------------------------------------------
+    const receivedData = request.body;
+    const { pageNo } = receivedData;
+    console.log(pageNo);
+    console.log("GETTING USERS DATA REQUEST RECEIVED.");
+    response.status(200).send({
+      message: "Fetched User's Reports Successfully",
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   makingSomeoneAdminController,
   giveUserPermissionToSellController,
@@ -244,4 +265,5 @@ export {
   approveProductController,
   seeingUserDetailsByAdminController,
   gettingReportsMadeByUserController,
+  gettingUsersDataController,
 };

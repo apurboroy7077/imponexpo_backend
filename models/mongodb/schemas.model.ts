@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { BANNED_PRODUCTS_COLLECTION_NAME } from "./collectionNames";
 const userSchema = new mongoose.Schema({
   userFullName: {
     type: String,
@@ -232,6 +233,21 @@ const productsToBeApprovedDataModelMongoDbMongoose = mongoose.model(
 const reportsDataModelMongoDbMongoose = mongoose.model(
   "reportsMadeByUsersData",
   reportsSchema
+);
+const bannedProductsSchema = new mongoose.Schema({
+  ar7idOfTheBannedProduct: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  timeStamp: {
+    type: String,
+    required: true,
+  },
+});
+export const bannedProductsDataModelMongoDbMongoose = mongoose.model(
+  BANNED_PRODUCTS_COLLECTION_NAME,
+  bannedProductsSchema
 );
 export {
   userDataModelMongoDbMongoose,

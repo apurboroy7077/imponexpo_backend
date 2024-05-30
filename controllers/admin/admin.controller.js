@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gettingReportsMadeByUserController = exports.seeingUserDetailsByAdminController = exports.approveProductController = exports.unBanUserController = exports.deleteProductByAdminController = exports.banUserController = exports.giveUserPermissionToSellController = exports.makingSomeoneAdminController = void 0;
+exports.gettingUsersDataController = exports.gettingReportsMadeByUserController = exports.seeingUserDetailsByAdminController = exports.approveProductController = exports.unBanUserController = exports.deleteProductByAdminController = exports.banUserController = exports.giveUserPermissionToSellController = exports.makingSomeoneAdminController = void 0;
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -204,3 +204,23 @@ const gettingReportsMadeByUserController = (request, response) => __awaiter(void
     }
 });
 exports.gettingReportsMadeByUserController = gettingReportsMadeByUserController;
+const gettingUsersDataController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // CHECK IF IS ADMIN---------------------------------------------------------------------------------------------------------
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
+        // GET REPORTS FROM DATABASE------------------------------------------------------------------------------
+        const receivedData = request.body;
+        const { pageNo } = receivedData;
+        console.log(pageNo);
+        console.log("GETTING USERS DATA REQUEST RECEIVED.");
+        response.status(200).send({
+            message: "Fetched User's Reports Successfully",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.gettingUsersDataController = gettingUsersDataController;

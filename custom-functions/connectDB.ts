@@ -14,7 +14,7 @@ const connectDB = async () => {
     .catch((error: any) => {
       console.log(error);
       setTimeout(() => {
-        connectDB();
+        // connectDB();
       }, 3000);
     });
 };

@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentsDataModelMongoDbMongoose = exports.reportsDataModelMongoDbMongoose = exports.productsToBeApprovedDataModelMongoDbMongoose = exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = void 0;
+exports.commentsDataModelMongoDbMongoose = exports.reportsDataModelMongoDbMongoose = exports.productsToBeApprovedDataModelMongoDbMongoose = exports.bannedUserDataModelMongoDbMongoose = exports.adminDataModelMongoDbMongoose = exports.sellersDataModelMongoDbMongoose = exports.followersDataModelMongoDbMongoose = exports.likesDataModelMongoDbMongoose = exports.productsDataModelMongoDbMongoose = exports.userDataModelMongoDbMongoose = exports.bannedProductsDataModelMongoDbMongoose = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const collectionNames_1 = require("./collectionNames");
 const userSchema = new mongoose_1.default.Schema({
     userFullName: {
         type: String,
@@ -221,3 +222,15 @@ const productsToBeApprovedDataModelMongoDbMongoose = mongoose_1.default.model("p
 exports.productsToBeApprovedDataModelMongoDbMongoose = productsToBeApprovedDataModelMongoDbMongoose;
 const reportsDataModelMongoDbMongoose = mongoose_1.default.model("reportsMadeByUsersData", reportsSchema);
 exports.reportsDataModelMongoDbMongoose = reportsDataModelMongoDbMongoose;
+const bannedProductsSchema = new mongoose_1.default.Schema({
+    ar7idOfTheBannedProduct: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    timeStamp: {
+        type: String,
+        required: true,
+    },
+});
+exports.bannedProductsDataModelMongoDbMongoose = mongoose_1.default.model(collectionNames_1.BANNED_PRODUCTS_COLLECTION_NAME, bannedProductsSchema);

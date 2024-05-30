@@ -23,8 +23,10 @@ import {
   givingCommentController,
   likeSomethingController,
   makingReportsController,
+  searching1Controller,
   unfollowSomeoneController,
 } from "../../controllers/user-activity/userActivity.controller";
+import { SUB_ADDRESS_OF_SEARCH_API_1 } from "../../data/ApiAddresses";
 
 const userActivityRouter = express.Router();
 userActivityRouter.post(
@@ -68,4 +70,5 @@ userActivityRouter.post(
   SUB_ADDRESS_OF_GETTING_TOTAL_NUMBERS_OF_FOLLOWERS_OF_A_SUBJECT_API,
   gettingTotalNumberOfFollowersOfASubjectController
 );
+userActivityRouter.post(SUB_ADDRESS_OF_SEARCH_API_1, searching1Controller);
 export { userActivityRouter };

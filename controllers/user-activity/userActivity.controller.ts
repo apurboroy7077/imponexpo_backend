@@ -7,6 +7,7 @@ import {
   followersDataModelMongoDbMongoose,
   likeDatatypeForSavingInDatabase,
   likesDataModelMongoDbMongoose,
+  productsDataModelMongoDbMongoose,
   reportsDataModelMongoDbMongoose,
 } from "../../models/mongodb/schemas.model";
 import {
@@ -322,7 +323,29 @@ const gettingCommentsOfSomethingController = async (
     response.status(500).send(error.message);
   }
 };
+const searching1Controller = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { typenWords } = receivedData;
+    const matchedProducts = await productsDataModelMongoDbMongoose
+      .find({
+        $or: [{ productName: { $regex: new RegExp(typenWords, "i") } }],
+      })
+      .limit(10);
 
+    response.status(200).send({
+      message: "Searched Successfully.",
+      searchResult: matchedProducts,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   likeSomethingController,
   checkLikeController,
@@ -335,5 +358,6 @@ export {
   gettingCommentsOfSomethingController,
   checkingIfASubjectIsFollowingSomethingOrNotController,
   gettingTotalNumberOfFollowersOfASubjectController,
+  searching1Controller,
 };
 //

@@ -14,11 +14,13 @@ import {
   banUserController,
   deleteProductByAdminController,
   gettingReportsMadeByUserController,
+  gettingUsersDataController,
   giveUserPermissionToSellController,
   makingSomeoneAdminController,
   seeingUserDetailsByAdminController,
   unBanUserController,
 } from "../../controllers/admin/admin.controller";
+import { SUB_ADDRESS_OF_GETTING_USERS_DATA_FOR_ADMIN_API } from "../../data/ApiAddresses";
 
 const adminRouter = express.Router();
 adminRouter.post(
@@ -46,5 +48,9 @@ adminRouter.post(
 adminRouter.post(
   SUB_ADDRESS_OF_GETTING_REPORTS_MADE_BY_USER_API,
   gettingReportsMadeByUserController
+);
+adminRouter.post(
+  SUB_ADDRESS_OF_GETTING_USERS_DATA_FOR_ADMIN_API,
+  gettingUsersDataController
 );
 export { adminRouter };
