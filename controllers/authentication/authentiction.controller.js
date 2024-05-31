@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gettingUserDetailsForClientsController = exports.getSellerDetailsOfProductsForClientSideController = exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
+exports.checkPermissionToSellStatusController = exports.checkBanStatusController = exports.gettingUserDetailsForClientsController = exports.getSellerDetailsOfProductsForClientSideController = exports.authenticateUserWithTokenController = exports.signInController = exports.signUpController = void 0;
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
 const hashingPassword_1 = require("../../custom-functions/password-hashing/hashingPassword");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
 const ar7id_1 = __importDefault(require("../../custom-functions/ar7id/ar7id"));
+const schemas2_model_1 = require("../../models/mongodb/schemas2.model");
 const signUpController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const receivedData = yield request.body;
@@ -163,4 +164,42 @@ const gettingUserDetailsForClientsController = (request, response) => __awaiter(
     }
 });
 exports.gettingUserDetailsForClientsController = gettingUserDetailsForClientsController;
+const checkBanStatusController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = request.body;
+        const { ar7idOfTheUser } = receivedData;
+        const bannedStatusData = yield schemas2_model_1.bannedSubjectDataModelMongoDbMongoose.findOne({
+            ar7idOfTheBannedSubject: ar7idOfTheUser,
+        });
+        response.status(200).send({
+            message: "Received User Details Request Successfully",
+            bannedStatusData: bannedStatusData,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.checkBanStatusController = checkBanStatusController;
+const checkPermissionToSellStatusController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const receivedData = request.body;
+        const { ar7idOfTheUser } = receivedData;
+        const data = yield schemas_model_1.sellersDataModelMongoDbMongoose.findOne({
+            ar7idOfSeller: ar7idOfTheUser,
+        });
+        response.status(200).send({
+            message: "Checked Permission to Sell Successfully",
+            data: data,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.checkPermissionToSellStatusController = checkPermissionToSellStatusController;
 //

@@ -8,15 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gettingUsersDataController = exports.gettingReportsMadeByUserController = exports.seeingUserDetailsByAdminController = exports.approveProductController = exports.unBanUserController = exports.deleteProductByAdminController = exports.banUserController = exports.giveUserPermissionToSellController = exports.makingSomeoneAdminController = void 0;
+exports.removeUserPermissionToSellController = exports.unBanSubjectController = exports.gettingUserDetailsForAdminController = exports.gettingUsersDataController = exports.gettingReportsMadeByUserController = exports.seeingUserDetailsByAdminController = exports.approveProductController = exports.unBanUserController = exports.deleteProductByAdminController = exports.banSubjectController = exports.giveUserPermissionToSellController = exports.makingSomeoneAdminController = void 0;
 const EnvironmentVariables_1 = require("../../data/EnvironmentVariables");
 const schemas_model_1 = require("../../models/mongodb/schemas.model");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const adminMiddlewares_1 = require("../../custom-functions/middlewares/admin/adminMiddlewares");
+const schemas2_model_1 = require("../../models/mongodb/schemas2.model");
 const makingSomeoneAdminController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const receivedData = request.body;
@@ -42,24 +39,13 @@ const makingSomeoneAdminController = (request, response) => __awaiter(void 0, vo
 exports.makingSomeoneAdminController = makingSomeoneAdminController;
 const giveUserPermissionToSellController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
         const receivedData = request.body;
-        const { authenticationToken } = receivedData;
-        const processedDataOfToken = (yield jsonwebtoken_1.default.verify(authenticationToken, EnvironmentVariables_1.JWT_SECRET_KEY));
-        const { ar7id } = processedDataOfToken;
-        // CHECK IF THE USER WHO MADE THIS REQUEST IS ADMIN OR NOT-------------------------------------------------------------------------------
-        // ----------------------------------------------------------------------------------------------------------
-        const userDataInAdminDatabase = yield schemas_model_1.adminDataModelMongoDbMongoose.find({
-            ar7idOfTheAdmin: ar7id,
-        });
-        if (userDataInAdminDatabase.length < 1) {
-            throw new Error("User is Not Admin");
-        }
-        //-------------------------------------------------------------------------------------------------------------------------------------------------
-        // ADD THE EMAIL WHICH ADMIN PROVIDED IN THE SELLERS DATABASE----------------------------------------------------------------------------------------------
-        // -----------------------------------------------------------------------------------------------------------------------------------------------------
         const { ar7idOfTheUserToGivePermissionToSell } = receivedData;
+        const timeStamp = Date.now();
         yield schemas_model_1.sellersDataModelMongoDbMongoose.create({
             ar7idOfSeller: ar7idOfTheUserToGivePermissionToSell,
+            timeStamp: timeStamp,
         });
         response.status(200).send({
             message: "Added The User to sellers list Successfully",
@@ -72,15 +58,35 @@ const giveUserPermissionToSellController = (request, response) => __awaiter(void
     }
 });
 exports.giveUserPermissionToSellController = giveUserPermissionToSellController;
-const banUserController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+const removeUserPermissionToSellController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
+        const receivedData = request.body;
+        const { ar7idOfTheUserToRemoveSellingPermission } = receivedData;
+        yield schemas_model_1.sellersDataModelMongoDbMongoose.deleteOne({
+            ar7idOfSeller: ar7idOfTheUserToRemoveSellingPermission,
+        });
+        response.status(200).send({
+            message: "Removed User's Permission of Selling Successfully.",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.removeUserPermissionToSellController = removeUserPermissionToSellController;
+const banSubjectController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // CHECK IF ADMIN---------------------------------------------------------------------------------------------------
-        (0, adminMiddlewares_1.checkIsAdmin)(request);
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
         // PUT THE USER IN BANLIST DATABASE----------------------------------------------------------------------------------
         const receivedData = request.body;
         const { ar7idOfTheUserWhoWillBeBanned } = receivedData;
-        yield schemas_model_1.bannedUserDataModelMongoDbMongoose.create({
-            ar7idOfTheBannedUser: ar7idOfTheUserWhoWillBeBanned,
+        yield schemas2_model_1.bannedSubjectDataModelMongoDbMongoose.create({
+            ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeBanned,
+            timeStamp: Date.now(),
         });
         response.status(200).send({
             message: "Banned User Successful.",
@@ -92,16 +98,16 @@ const banUserController = (request, response) => __awaiter(void 0, void 0, void 
         response.status(500).send(error.message);
     }
 });
-exports.banUserController = banUserController;
+exports.banSubjectController = banSubjectController;
 const unBanUserController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // CHECK ADMIN OR NOT--------------------------------------------------------------------------------------------------------
-        (0, adminMiddlewares_1.checkIsAdmin)(request);
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
         //  Remove USER FROM BANLIST----------------------------------------------------------------------------------------------------------
         const receivedData = request.body;
         const { ar7idOfTheUserWhoWillBeUnBanned } = receivedData;
-        yield schemas_model_1.bannedUserDataModelMongoDbMongoose.deleteOne({
-            ar7idOfTheBannedUser: ar7idOfTheUserWhoWillBeUnBanned,
+        yield schemas2_model_1.bannedSubjectDataModelMongoDbMongoose.deleteOne({
+            ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeUnBanned,
         });
         response.status(200).send({
             message: "Banned User Successful.",
@@ -114,6 +120,27 @@ const unBanUserController = (request, response) => __awaiter(void 0, void 0, voi
     }
 });
 exports.unBanUserController = unBanUserController;
+const unBanSubjectController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // CHECK ADMIN OR NOT--------------------------------------------------------------------------------------------------------
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
+        //  Remove USER FROM BANLIST----------------------------------------------------------------------------------------------------------
+        const receivedData = request.body;
+        const { ar7idOfTheUserWhoWillBeUnBanned } = receivedData;
+        yield schemas2_model_1.bannedSubjectDataModelMongoDbMongoose.deleteOne({
+            ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeUnBanned,
+        });
+        response.status(200).send({
+            message: "Unbanned Successfully.",
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.unBanSubjectController = unBanSubjectController;
 const deleteProductByAdminController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // CHECK IF IS ADMIN---------------------------------------------------------------------------------------------------------
@@ -211,10 +238,15 @@ const gettingUsersDataController = (request, response) => __awaiter(void 0, void
         // GET REPORTS FROM DATABASE------------------------------------------------------------------------------
         const receivedData = request.body;
         const { pageNo } = receivedData;
-        console.log(pageNo);
-        console.log("GETTING USERS DATA REQUEST RECEIVED.");
+        const skippingNumber = (pageNo - 1) * 10;
+        const limitNumber = 10;
+        const usersData = yield schemas_model_1.userDataModelMongoDbMongoose
+            .find({})
+            .skip(skippingNumber)
+            .limit(limitNumber);
         response.status(200).send({
-            message: "Fetched User's Reports Successfully",
+            message: "Fetched User's Data Successfully.",
+            usersData: usersData,
         });
     }
     catch (error) {
@@ -224,3 +256,24 @@ const gettingUsersDataController = (request, response) => __awaiter(void 0, void
     }
 });
 exports.gettingUsersDataController = gettingUsersDataController;
+const gettingUserDetailsForAdminController = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // CHECK IF IS ADMIN---------------------------------------------------------------------------------------------------------
+        yield (0, adminMiddlewares_1.checkIsAdmin)(request);
+        const receivedData = request.body;
+        const { ar7idOfTheUser } = receivedData;
+        const userDetails = yield schemas_model_1.userDataModelMongoDbMongoose.findOne({
+            ar7id: ar7idOfTheUser,
+        });
+        response.status(200).send({
+            message: "Fetched User's Data Successfully.",
+            userDetails: userDetails,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+        response.status(500).send(error.message);
+    }
+});
+exports.gettingUserDetailsForAdminController = gettingUserDetailsForAdminController;

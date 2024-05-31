@@ -172,6 +172,10 @@ const selllerSchema = new mongoose_1.default.Schema({
         required: true,
         unique: true,
     },
+    timeStamp: {
+        type: String,
+        required: true,
+    },
 });
 const adminSchema = new mongoose_1.default.Schema({
     ar7idOfTheAdmin: {

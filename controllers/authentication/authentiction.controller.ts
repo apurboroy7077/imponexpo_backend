@@ -1,5 +1,8 @@
 import express from "express";
-import { userDataModelMongoDbMongoose } from "../../models/mongodb/schemas.model";
+import {
+  sellersDataModelMongoDbMongoose,
+  userDataModelMongoDbMongoose,
+} from "../../models/mongodb/schemas.model";
 import {
   checkPassword,
   hashMyPassword,
@@ -11,6 +14,7 @@ import {
   userDataSavedOnDatabaseType,
 } from "../../data/types";
 import ar7id from "../../custom-functions/ar7id/ar7id";
+import { bannedSubjectDataModelMongoDbMongoose } from "../../models/mongodb/schemas2.model";
 const signUpController = async (
   request: express.Request,
   response: express.Response
@@ -196,11 +200,56 @@ const gettingUserDetailsForClientsController = async (
     response.status(500).send(error.message);
   }
 };
+const checkBanStatusController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { ar7idOfTheUser } = receivedData;
+    const bannedStatusData =
+      await bannedSubjectDataModelMongoDbMongoose.findOne({
+        ar7idOfTheBannedSubject: ar7idOfTheUser,
+      });
+
+    response.status(200).send({
+      message: "Received User Details Request Successfully",
+      bannedStatusData: bannedStatusData,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const checkPermissionToSellStatusController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    const receivedData = request.body;
+    const { ar7idOfTheUser } = receivedData;
+    const data = await sellersDataModelMongoDbMongoose.findOne({
+      ar7idOfSeller: ar7idOfTheUser,
+    });
+
+    response.status(200).send({
+      message: "Checked Permission to Sell Successfully",
+      data: data,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
 export {
   signUpController,
   signInController,
   authenticateUserWithTokenController,
   getSellerDetailsOfProductsForClientSideController,
   gettingUserDetailsForClientsController,
+  checkBanStatusController,
+  checkPermissionToSellStatusController,
 };
 //

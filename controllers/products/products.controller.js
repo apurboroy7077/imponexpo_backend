@@ -252,7 +252,6 @@ const getRandomProducts2Controller = (request, response) => __awaiter(void 0, vo
                 }
             }
         }
-        console.log(dataForClient);
         response.status(200).send({
             message: "Random Products Fetching Successful",
             productsData: dataForClient,

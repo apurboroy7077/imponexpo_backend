@@ -18,6 +18,7 @@ import {
   checkIsAdmin,
   checkIsAdmin2,
 } from "../../custom-functions/middlewares/admin/adminMiddlewares";
+import { bannedSubjectDataModelMongoDbMongoose } from "../../models/mongodb/schemas2.model";
 
 const makingSomeoneAdminController = async (
   request: express.Request,
@@ -52,29 +53,14 @@ const giveUserPermissionToSellController = async (
   response: express.Response
 ) => {
   try {
+    await checkIsAdmin(request);
     const receivedData = request.body;
-    const { authenticationToken } = receivedData;
-    const processedDataOfToken = (await jwt.verify(
-      authenticationToken,
-      JWT_SECRET_KEY
-    )) as processedDataOfAuthenticationToken;
 
-    const { ar7id } = processedDataOfToken;
-    // CHECK IF THE USER WHO MADE THIS REQUEST IS ADMIN OR NOT-------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------
-    const userDataInAdminDatabase = await adminDataModelMongoDbMongoose.find({
-      ar7idOfTheAdmin: ar7id,
-    });
-    if (userDataInAdminDatabase.length < 1) {
-      throw new Error("User is Not Admin");
-    }
-    //-------------------------------------------------------------------------------------------------------------------------------------------------
-    // ADD THE EMAIL WHICH ADMIN PROVIDED IN THE SELLERS DATABASE----------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------------------------------------------
     const { ar7idOfTheUserToGivePermissionToSell } = receivedData;
-
+    const timeStamp = Date.now();
     await sellersDataModelMongoDbMongoose.create({
       ar7idOfSeller: ar7idOfTheUserToGivePermissionToSell,
+      timeStamp: timeStamp,
     });
 
     response.status(200).send({
@@ -87,18 +73,43 @@ const giveUserPermissionToSellController = async (
     response.status(500).send(error.message);
   }
 };
-const banUserController = async (
+const removeUserPermissionToSellController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    await checkIsAdmin(request);
+    const receivedData = request.body;
+    const { ar7idOfTheUserToRemoveSellingPermission } = receivedData;
+    await sellersDataModelMongoDbMongoose.deleteOne({
+      ar7idOfSeller: ar7idOfTheUserToRemoveSellingPermission,
+    });
+
+    response.status(200).send({
+      message: "Removed User's Permission of Selling Successfully.",
+    });
+  } catch (error: any) {
+    console.log(error);
+
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const banSubjectController = async (
   request: express.Request,
   response: express.Response
 ) => {
   try {
     // CHECK IF ADMIN---------------------------------------------------------------------------------------------------
-    checkIsAdmin(request);
+    await checkIsAdmin(request);
     // PUT THE USER IN BANLIST DATABASE----------------------------------------------------------------------------------
+
     const receivedData = request.body;
     const { ar7idOfTheUserWhoWillBeBanned } = receivedData;
-    await bannedUserDataModelMongoDbMongoose.create({
-      ar7idOfTheBannedUser: ar7idOfTheUserWhoWillBeBanned,
+
+    await bannedSubjectDataModelMongoDbMongoose.create({
+      ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeBanned,
+      timeStamp: Date.now(),
     });
 
     response.status(200).send({
@@ -117,15 +128,39 @@ const unBanUserController = async (
 ) => {
   try {
     // CHECK ADMIN OR NOT--------------------------------------------------------------------------------------------------------
-    checkIsAdmin(request);
+    await checkIsAdmin(request);
     //  Remove USER FROM BANLIST----------------------------------------------------------------------------------------------------------
     const receivedData = request.body;
     const { ar7idOfTheUserWhoWillBeUnBanned } = receivedData;
-    await bannedUserDataModelMongoDbMongoose.deleteOne({
-      ar7idOfTheBannedUser: ar7idOfTheUserWhoWillBeUnBanned,
+    await bannedSubjectDataModelMongoDbMongoose.deleteOne({
+      ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeUnBanned,
     });
     response.status(200).send({
       message: "Banned User Successful.",
+    });
+  } catch (error: any) {
+    console.log(error);
+
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+const unBanSubjectController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    // CHECK ADMIN OR NOT--------------------------------------------------------------------------------------------------------
+
+    await checkIsAdmin(request);
+    //  Remove USER FROM BANLIST----------------------------------------------------------------------------------------------------------
+    const receivedData = request.body;
+    const { ar7idOfTheUserWhoWillBeUnBanned } = receivedData;
+    await bannedSubjectDataModelMongoDbMongoose.deleteOne({
+      ar7idOfTheBannedSubject: ar7idOfTheUserWhoWillBeUnBanned,
+    });
+    response.status(200).send({
+      message: "Unbanned Successfully.",
     });
   } catch (error: any) {
     console.log(error);
@@ -245,10 +280,16 @@ const gettingUsersDataController = async (
     // GET REPORTS FROM DATABASE------------------------------------------------------------------------------
     const receivedData = request.body;
     const { pageNo } = receivedData;
-    console.log(pageNo);
-    console.log("GETTING USERS DATA REQUEST RECEIVED.");
+    const skippingNumber = (pageNo - 1) * 10;
+    const limitNumber = 10;
+    const usersData = await userDataModelMongoDbMongoose
+      .find({})
+      .skip(skippingNumber)
+      .limit(limitNumber);
+
     response.status(200).send({
-      message: "Fetched User's Reports Successfully",
+      message: "Fetched User's Data Successfully.",
+      usersData: usersData,
     });
   } catch (error: any) {
     console.log(error);
@@ -256,14 +297,41 @@ const gettingUsersDataController = async (
     response.status(500).send(error.message);
   }
 };
+const gettingUserDetailsForAdminController = async (
+  request: express.Request,
+  response: express.Response
+) => {
+  try {
+    // CHECK IF IS ADMIN---------------------------------------------------------------------------------------------------------
+    await checkIsAdmin(request);
+    const receivedData = request.body;
+    const { ar7idOfTheUser } = receivedData;
+    const userDetails = await userDataModelMongoDbMongoose.findOne({
+      ar7id: ar7idOfTheUser,
+    });
+
+    response.status(200).send({
+      message: "Fetched User's Data Successfully.",
+      userDetails: userDetails,
+    });
+  } catch (error: any) {
+    console.log(error);
+    // SENDING RESPONSE IF ANYTHING GOES WRONG---------------------------------------------------------------------
+    response.status(500).send(error.message);
+  }
+};
+
 export {
   makingSomeoneAdminController,
   giveUserPermissionToSellController,
-  banUserController,
+  banSubjectController,
   deleteProductByAdminController,
   unBanUserController,
   approveProductController,
   seeingUserDetailsByAdminController,
   gettingReportsMadeByUserController,
   gettingUsersDataController,
+  gettingUserDetailsForAdminController,
+  unBanSubjectController,
+  removeUserPermissionToSellController,
 };

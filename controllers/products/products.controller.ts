@@ -306,7 +306,7 @@ const getRandomProducts2Controller = async (
         }
       }
     }
-    console.log(dataForClient);
+
     response.status(200).send({
       message: "Random Products Fetching Successful",
       productsData: dataForClient,
